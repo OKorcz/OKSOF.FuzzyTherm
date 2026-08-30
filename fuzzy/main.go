@@ -27,7 +27,7 @@ func main() {
 	for i := range 51 {
 		waterTemperature := i + 20
 		CH_Temp := 60
-		pelletLevel := 100
+		pelletLevel := 77
 
 		decisionFuzzy := new(control.DecisionFuzzy)
 		fuzzyStrategy := decisionFuzzy.DecideStrategy(float64(waterTemperature), float64(CH_Temp), float64(pelletLevel))

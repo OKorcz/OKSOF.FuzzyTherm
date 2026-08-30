@@ -60,36 +60,36 @@ func fuzzyStrategyScores(
 ) fuzzyStrategy {
 
 	// How much does DHW need heating?
-	cold := leftShoulder(dhwTemp, 25.0, 45.0)
-	warm := triangle(dhwTemp, 40.0, 55.0, 60.0)
-	// hot := rightShoulder(dhwTemp, 55.0, 60.0)
+	cold := leftShoulder(dhwTemp, 30.0, 42.0)
+	warm := triangle(dhwTemp, 35.0, 45.0, 55.0)
+	hot := rightShoulder(dhwTemp, 48.0, 60.0)
 
 	// How useful is the heat available from CO?
-	lowDelta := leftShoulder(deltaT, 0.0, 10.0)
-	highDelta := rightShoulder(deltaT, 8.0, 15.0)
+	lowDelta := leftShoulder(deltaT, 0.0, 15.0)
+	highDelta := rightShoulder(deltaT, 5.0, 20.0)
 
 	// How much pellet is left
-	lowPelletLevel := leftShoulder(pelletLevelPercent, 40.0, 50.0)
-	mediumPelletLevel := triangle(pelletLevelPercent, 33.3, 50.0, 66.6)
-	highPelletLevel := rightShoulder(pelletLevelPercent, 50.0, 95.0)
+	lowPelletLevel := leftShoulder(pelletLevelPercent, 20.0, 50.0)
+	mediumPelletLevel := triangle(pelletLevelPercent, 20.0, 50.0, 80.0)
+	highPelletLevel := rightShoulder(pelletLevelPercent, 65.0, 85.0)
 
 	return fuzzyStrategy{
 		Electric: max(
 			lowDelta,
-			lowPelletLevel),
+			lowPelletLevel,
+		),
 
 		Hybrid: min(
-			max(
-				min(cold, highPelletLevel),
-				min(warm, 1-lowPelletLevel),
-			),
+			max(cold, warm),
 			highDelta,
 			max(mediumPelletLevel, highPelletLevel),
 		),
 
 		FromHotWater: min(
 			highDelta,
-			highPelletLevel),
+			highPelletLevel,
+			max(cold, warm, hot),
+		),
 	}
 }
 
